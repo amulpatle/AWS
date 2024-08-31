@@ -43,3 +43,6 @@ def import_data(request):
             'custom_models':custom_models
         }
     return render(request,'dataentry/importdata.html',context)
+
+def export_data(request):
+    return render(request,'dataentry/exportdata.html')
