@@ -2,6 +2,8 @@ from django.apps import apps
 from django.core.management.base import CommandError
 import csv
 from django.db import DataError
+from django.conf import settings
+from django.core.mail import EmailMessage
 
 def get_all_custom_models():
     # Try to get all the apps
@@ -43,4 +45,13 @@ def check_csv_errors(file_path,model_name):
         raise e
     
     return model
+    
+
+def send_email_notificaton(mail_subject,message,to_email):
+    try:
+        from_email = settings.DEFAULT_FROM_EMAIL
+        mail = EmailMessage(mail_subject,message,from_email,to=[to_email])
+        mail.send()
+    except Exception as e:
+        raise e
     

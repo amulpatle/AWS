@@ -150,3 +150,5 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True  # Corrected setting name
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 DEFAULT_FROM_EMAIL = 'Automate with Django <tester.gml.69@gmail.com'
+
+DEFAULT_TO_EMAIL = 'amulpatle3@gmail.com'
