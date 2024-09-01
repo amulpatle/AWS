@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
     {% block content %}
-    <div class="container">
+    <div class="container mt-5 alert-success shadow " style="max-width: 600px; border-radius:10px;">
         <h3 class="text-center">Export Data from Database Tables</h3>
         <form action="{% url 'export_data' %}" method="POST" style="max-width: 600px; margin:auto; padding-top: 50px;">
             {% csrf_token %}
@@ -17,7 +17,9 @@
                     {% endfor %}
                 </select>
             </div>
-            <input type="submit" value="Export Data" class="btn btn-primary">
+            <div class="form-group">
+                <input type="submit" value="Export Data" class="btn btn-success">
+            </div>
 
             {% include 'alerts.html' %}
         </form>
