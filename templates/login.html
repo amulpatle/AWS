@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+
+<div class="container mt-5" style="max-width: 600px;">
+    <h2 class="text-center">Login</h2>
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <!-- Manually render each field to ensure only the desired fields are shown -->
+        <div class="form-group">
+            {{form | crispy}}
+        </div>
+        <div class="form-group">
+            <input type="submit" value="login" class="btn
+        </div>
+         btn-success">
+    </form>
+    
+</div>
+{% endblock %}
