@@ -5,10 +5,23 @@
 
 <div class="container mt-5" style="max-width: 600px;">
     <h2 class="text-center">Register</h2>
-    <form action="">
-    {{form | crispy}}
-    <input type="submit" value="Register" class="btn btn-success">
-</form>
+    <form method="post" action="{% url 'register' %}">
+        {% csrf_token %}
+        <!-- Manually render each field to ensure only the desired fields are shown -->
+        <div class="mb-3">
+            {{ form.email|as_crispy_field }}
+        </div>
+        <div class="mb-3">
+            {{ form.username|as_crispy_field }}
+        </div>
+        <div class="mb-3">
+            {{ form.password1|as_crispy_field }}
+        </div>
+        <div class="mb-3">
+            {{ form.password2|as_crispy_field }}
+        </div>
+        <input type="submit" value="Register" class="btn btn-success">
+    </form>
 </div>
 
 {% endblock %}
