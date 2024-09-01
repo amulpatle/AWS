@@ -123,7 +123,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'static' 
-STATIC_DIRS = [
+STATICFILES_DIRS = [
     'awd_main/static',
 ]
 
