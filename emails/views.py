@@ -3,18 +3,27 @@ from .forms import EmailForm
 from django.contrib import messages
 from dataentry.utils import send_email_notificaton
 from django.conf import settings
+from .models import Subscriber
 # Create your views here.
 
 def send_email(request):
     if request.method == 'POST':
         email_form = EmailForm(request.POST,request.FILES)
         if email_form.is_valid():
-            email_form.save()
+            email_form = email_form.save()
 
             # send email
             mail_subject = request.POST.get('subject')
             message = request.POST.get('body')
-            to_email = settings.DEFAULT_TO_EMAIL
+            email_list = request.POST.get('email_list')
+            # Access the select email list
+            email_list = email_form.email_list
+             
+            # Extract email addresses from the Subscriber model in the selected email list
+            subscribers = Subscriber.objects.filter(email_list=email_list)
+            
+            to_email = [email.email_address for email in subscribers]
+            
             send_email_notificaton(mail_subject,message,to_email)
             messages.success(request,'Email send successfully!')
             return redirect('send_email')
