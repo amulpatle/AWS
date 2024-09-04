@@ -162,3 +162,6 @@ DEFAULT_TO_EMAIL = 'amulpatle3@gmail.com'
 
 
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
+
+# redis-server
+# celery -A awd_main worker --loglevel=info

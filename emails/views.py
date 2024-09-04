@@ -4,6 +4,7 @@ from django.contrib import messages
 from dataentry.utils import send_email_notificaton
 from django.conf import settings
 from .models import Subscriber
+from .tasks  import send_email_task
 # Create your views here.
 
 def send_email(request):
@@ -27,7 +28,8 @@ def send_email(request):
                 attachment = email_form.attachment.path
             else:
                 attachment = None
-            send_email_notificaton(mail_subject,message,to_email,attachment)
+            # handover email sending task to celery
+            send_email_task.delay(mail_subject,message,to_email,attachment)
             messages.success(request,'Email send successfully!')
             return redirect('send_email')
             
