@@ -23,8 +23,11 @@ def send_email(request):
             subscribers = Subscriber.objects.filter(email_list=email_list)
             
             to_email = [email.email_address for email in subscribers]
-            
-            send_email_notificaton(mail_subject,message,to_email)
+            if email_form.attachment:
+                attachment = email_form.attachment.path
+            else:
+                attachment = None
+            send_email_notificaton(mail_subject,message,to_email,attachment)
             messages.success(request,'Email send successfully!')
             return redirect('send_email')
             
