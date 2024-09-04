@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'emails',
+    'ckeditor',
 ]
 
 
@@ -162,6 +163,18 @@ DEFAULT_TO_EMAIL = 'amulpatle3@gmail.com'
 
 
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
+
+
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        
+        'height': 200,
+    },
+}
+
+
+
 
 # redis-server
 # celery -A awd_main worker --loglevel=info
