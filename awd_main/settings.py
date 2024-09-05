@@ -184,4 +184,10 @@ EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
 
 
 # redis-server
+# sudo lsof -i :6379
+# sudo kill 18341
+
 # celery -A awd_main worker --loglevel=info
+
+
+# read about reverse lookup
