@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from .forms import EmailForm
 from django.contrib import messages
 from dataentry.utils import send_email_notificaton
@@ -53,3 +53,10 @@ def track_dashboard(request):
         'emails':emails,
     }
     return render(request,'emails/track_dashboard.html',context)
+
+def track_stats(request,pk):
+    email = get_object_or_404(Email,pk=pk)
+    context = {
+        'email':email,
+    }
+    return render(request,'emails/track_stats.html',context)
