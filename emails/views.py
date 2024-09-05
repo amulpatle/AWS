@@ -5,6 +5,7 @@ from dataentry.utils import send_email_notificaton
 from django.conf import settings
 from .models import Subscriber
 from .tasks  import send_email_task
+from .models import Email
 # Create your views here.
 
 def send_email(request):
@@ -39,3 +40,16 @@ def send_email(request):
             'email_form':email_form
         }
         return render(request,'emails/send-email.html',context)
+    
+def track_click(request):
+    return 
+
+def track_open(request):
+    return 
+
+def track_dashboard(request):
+    emails = Email.objects.all()
+    context = {
+        'emails':emails,
+    }
+    return render(request,'emails/track_dashboard.html',context)
