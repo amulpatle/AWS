@@ -26,7 +26,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG',default=False,cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -179,6 +179,10 @@ ANYMAIL = {
 } 
 EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
 
+CSRF_TRUSTED_ORIGINS = ['https://a48b-2402-8100-26e4-9a40-8bbe-98a4-dec6-f6d0.ngrok-free.app']
+BASE_URL = 'https://a48b-2402-8100-26e4-9a40-8bbe-98a4-dec6-f6d0.ngrok-free.app'
+
+
 
 
 
@@ -191,3 +195,4 @@ EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
 
 
 # read about reverse lookup
+
