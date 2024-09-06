@@ -9,7 +9,7 @@ from .models import Email,Sent
 from django.db.models import Sum
 from .models import EmailTracking
 from django.utils import timezone
-from django.http import HttpResponse
+from django.http import HttpResponse,HttpResponseRedirect
 # Create your views here.
 
 def send_email(request):
@@ -47,8 +47,19 @@ def send_email(request):
         return render(request,'emails/send-email.html',context)
     
 def track_click(request,unique_id):
-    print(request)
-    return 
+    # Logic to store the tracking info
+    try:
+        email_tracking = EmailTracking.objects.get(unique_id=unique_id)
+        url = request.GET.get('url')
+        # check if the Clicked_at field is already set or not
+        if not email_tracking.clicked_at:
+            email_tracking.clicked_at = timezone.now()
+            email_tracking.save()
+            return HttpResponseRedirect(url)
+        else:
+            return HttpResponseRedirect(url)
+    except:
+        return HttpResponse('Email tracking record not found') 
 
 def track_open(request,unique_id):
     try:
