@@ -7,6 +7,9 @@ from .models import Subscriber
 from .tasks  import send_email_task
 from .models import Email,Sent
 from django.db.models import Sum
+from .models import EmailTracking
+from django.utils import timezone
+from django.http import HttpResponse
 # Create your views here.
 
 def send_email(request):
@@ -47,8 +50,18 @@ def track_click(request,unique_id):
     print(request)
     return 
 
-def track_open(request):
-    return 
+def track_open(request,unique_id):
+    try:
+        email_tracking = EmailTracking.objects.get(unique_id=unique_id)
+        if not email_tracking.opened_at:
+            email_tracking.opened_at = timezone.now()
+            email_tracking.save()
+            return HttpResponse('Email opened successfully!')
+        else:
+            print('Email already opened')
+            return HttpResponse('Email already opened')
+    except:
+        return HttpResponse('Email tracking record not found')
 
 def track_dashboard(request):
     emails = Email.objects.all().annotate(total_sent=Sum('sent__total_sent'))
