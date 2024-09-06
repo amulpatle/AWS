@@ -60,6 +60,7 @@ def send_email_notificaton(mail_subject,message,to_email,attachment=None,email_i
         from_email = settings.DEFAULT_FROM_EMAIL
         for recipent_email in to_email:
             # Create EmailTracking record
+            new_message = message
             if email_id:
                 email = Email.objects.get(pk=email_id)
                 subscriber = Subscriber.objects.get(email_list=email.email_list,email_address=recipent_email)
@@ -74,11 +75,12 @@ def send_email_notificaton(mail_subject,message,to_email,attachment=None,email_i
                 base_url = settings.BASE_URL
                 # Generate the tracking pixel
                 click_tracking_url = f"{base_url}/emails/track/click/{unique_id}"
+                open_tracking_url = f"{base_url}/emails/track/open/{unique_id}"
                 
                 # Search for the links in the email body
                 soup = BeautifulSoup(message, 'html.parser')
                 urls = [a['href'] for a in soup.find_all('a', href=True)]
-                print(f"Found URLs: {urls}")
+                
                 
                 # If ther are links or urls in the email body, inject out click tracking url to that original link
                 if urls:
@@ -93,8 +95,11 @@ def send_email_notificaton(mail_subject,message,to_email,attachment=None,email_i
                         
                 else:
                     print('No URLs found in the email content')
-            else:
-                new_message = message
+                
+                # Create email content with tracking pixel image
+                open_tracking_img = f"<img src='{open_tracking_url}' width='1' height='1'>"
+                new_message += open_tracking_img
+            
                 
                 # If there are links or urls in the email body, inject our click tracking url to that original link
             
