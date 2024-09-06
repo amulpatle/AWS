@@ -76,13 +76,29 @@ def send_email_notificaton(mail_subject,message,to_email,attachment=None,email_i
                 click_tracking_url = f"{base_url}/emails/track/click/{unique_id}"
                 
                 # Search for the links in the email body
-                soup = BeautifulSoup(message,'html.parser')
+                soup = BeautifulSoup(message, 'html.parser')
+                urls = [a['href'] for a in soup.find_all('a', href=True)]
+                print(f"Found URLs: {urls}")
                 
-                urls = [a['href'] for a in soup.find_all('a',href=True)]
+                # If ther are links or urls in the email body, inject out click tracking url to that original link
+                if urls:
+                    new_message = message
+                    print(urls)
+                    print(new_message)
+                    for url in urls:
+                        # make th final tracking url
+                        tracking_url = f"{click_tracking_url}?url={url}"
+                        new_message = new_message.replace(f"{url}", f"{tracking_url}")
+                        print(f"Tracking URL added: {tracking_url}")
+                        
+                else:
+                    print('No URLs found in the email content')
+            else:
+                new_message = message
                 
                 # If there are links or urls in the email body, inject our click tracking url to that original link
             
-            mail = EmailMessage(mail_subject,message,from_email,to=to_email)
+            mail = EmailMessage(mail_subject,new_message,from_email,to=[recipent_email])
             if attachment is not None:
                 mail.attach_file(attachment)
             mail.content_subtype = "html"

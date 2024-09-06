@@ -43,7 +43,8 @@ def send_email(request):
         }
         return render(request,'emails/send-email.html',context)
     
-def track_click(request):
+def track_click(request,unique_id):
+    print(request)
     return 
 
 def track_open(request):
