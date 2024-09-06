@@ -9,6 +9,10 @@ from django.core.mail import EmailMessage
 import datetime
 import os
 from emails.models import Email,Sent,EmailTracking,Subscriber
+from bs4 import BeautifulSoup
+
+
+
 def get_all_custom_models():
     # Try to get all the apps
     default_models = ['ContentType','Session','LogEntry','Group','Permission','User','Upload']
@@ -72,6 +76,9 @@ def send_email_notificaton(mail_subject,message,to_email,attachment=None,email_i
                 click_tracking_url = f"{base_url}/emails/track/click/{unique_id}"
                 
                 # Search for the links in the email body
+                soup = BeautifulSoup(message,'html.parser')
+                
+                urls = [a['href'] for a in soup.find_all('a',href=True)]
                 
                 # If there are links or urls in the email body, inject our click tracking url to that original link
             
