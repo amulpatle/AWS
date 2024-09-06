@@ -108,7 +108,7 @@ def send_email_notificaton(mail_subject,message,to_email,attachment=None,email_i
                 mail.attach_file(attachment)
             mail.content_subtype = "html"
             mail.send()
-        if email:
+        if email_id:
             sent = Sent()
             sent.email = email
             sent.total_sent = email.email_list.count_emails()
