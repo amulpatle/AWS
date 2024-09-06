@@ -7,7 +7,7 @@
     <form method="post" action="{% url 'compress' %}" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-group">
-            <!-- {{email_form | crispy}} -->
+            {{form | crispy}}
         </div>
         <div class="form-group">
             <input type="submit" value="Compress" class="btn btn-primary">
