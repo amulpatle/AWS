@@ -10,7 +10,7 @@ import datetime
 import os
 from emails.models import Email,Sent,EmailTracking,Subscriber
 from bs4 import BeautifulSoup
-
+from urllib.parse import quote, urljoin
 
 
 def get_all_custom_models():
@@ -58,63 +58,70 @@ def check_csv_errors(file_path,model_name):
 def send_email_notificaton(mail_subject,message,to_email,attachment=None,email_id=None):
     try:
         from_email = settings.DEFAULT_FROM_EMAIL
-        for recipent_email in to_email:
-            # Create EmailTracking record
+        base_url = settings.BASE_URL
+
+        for recipient_email in to_email:
+            # Initialize the modified message
             new_message = message
+            
             if email_id:
+                # Fetch the email and subscriber details
                 email = Email.objects.get(pk=email_id)
-                subscriber = Subscriber.objects.get(email_list=email.email_list,email_address=recipent_email)
-                timestamp = str(time.time())
-                data_to_hash = f"{recipent_email}{timestamp}"
-                unique_id = hashlib.sha256(data_to_hash.encode()).hexdigest()
-                email_tracking = EmailTracking.objects.create(
-                    email = email,
-                    subscriber = subscriber,
-                    unique_id = unique_id,
-                )
-                base_url = settings.BASE_URL
-                # Generate the tracking pixel
-                click_tracking_url = f"{base_url}/emails/track/click/{unique_id}"
-                open_tracking_url = f"{base_url}/emails/track/open/{unique_id}"
+                subscriber = Subscriber.objects.get(email_list=email.email_list, email_address=recipient_email)
                 
-                # Search for the links in the email body
+                # Generate unique ID for tracking
+                timestamp = str(time.time())
+                data_to_hash = f"{recipient_email}{timestamp}"
+                unique_id = hashlib.sha256(data_to_hash.encode()).hexdigest()
+                
+                # Create an EmailTracking record
+                email_tracking = EmailTracking.objects.create(
+                    email=email,
+                    subscriber=subscriber,
+                    unique_id=unique_id,
+                )
+
+                # Generate the tracking URLs
+                click_tracking_url = urljoin(base_url, f"/emails/track/click/{unique_id}")
+                open_tracking_url = urljoin(base_url, f"/emails/track/open/{unique_id}")
+
+                # Parse the email content and find all links
                 soup = BeautifulSoup(message, 'html.parser')
                 urls = [a['href'] for a in soup.find_all('a', href=True)]
-                
-                
-                # If ther are links or urls in the email body, inject out click tracking url to that original link
+
+                # Replace URLs with tracking URLs
                 if urls:
-                    new_message = message
-                    print(urls)
-                    print(new_message)
                     for url in urls:
-                        # make th final tracking url
-                        tracking_url = f"{click_tracking_url}?url={url}"
-                        new_message = new_message.replace(f"{url}", f"{tracking_url}")
-                        print(f"Tracking URL added: {tracking_url}")
-                        
+                        # Encode the URL properly to handle special characters
+                        encoded_url = quote(url, safe='')
+                        tracking_url = f"{click_tracking_url}?url={encoded_url}"
+                        new_message = new_message.replace(url, tracking_url)
                 else:
                     print('No URLs found in the email content')
-                
-                # Create email content with tracking pixel image
+
+                # Append the open tracking image to the email content
                 open_tracking_img = f"<img src='{open_tracking_url}' width='1' height='1'>"
                 new_message += open_tracking_img
-            
-                
-                # If there are links or urls in the email body, inject our click tracking url to that original link
-            
-            mail = EmailMessage(mail_subject,new_message,from_email,to=[recipent_email])
+
+            # Create the email message
+            mail = EmailMessage(mail_subject, new_message, from_email, to=[recipient_email])
             if attachment is not None:
                 mail.attach_file(attachment)
+
+            # Send the email as HTML
             mail.content_subtype = "html"
             mail.send()
+
+        # Save the total sent emails count in the Sent model
         if email_id:
             sent = Sent()
             sent.email = email
             sent.total_sent = email.email_list.count_emails()
             sent.save()
+            
     except Exception as e:
         raise e
+
     
 def generate_csv_file(model_name):   
     # generate the timestampof current data and time

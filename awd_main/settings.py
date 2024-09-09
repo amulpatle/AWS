@@ -180,8 +180,8 @@ ANYMAIL = {
 } 
 EMAIL_BACKEND = "anymail.backends.sendinblue.EmailBackend"
 
-CSRF_TRUSTED_ORIGINS = ['https://5545-2402-8100-26f6-5a5a-7f52-90d8-225e-9555.ngrok-free.app']
-BASE_URL = 'https://5545-2402-8100-26f6-5a5a-7f52-90d8-225e-9555.ngrok-free.app'
+CSRF_TRUSTED_ORIGINS = ['https://d93c-2402-8100-279b-6fd9-d7e5-e3d-9ceb-5c0c.ngrok-free.app']
+BASE_URL = 'https://d93c-2402-8100-279b-6fd9-d7e5-e3d-9ceb-5c0c.ngrok-free.app'
 
 
 

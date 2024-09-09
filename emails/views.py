@@ -51,7 +51,7 @@ def track_click(request,unique_id):
     try:
         email_tracking = EmailTracking.objects.get(unique_id=unique_id)
         url = request.GET.get('url')
-        # check if the Clicked_at field is already set or not
+        # Check if the clicked_at field is already set or not
         if not email_tracking.clicked_at:
             email_tracking.clicked_at = timezone.now()
             email_tracking.save()
@@ -59,20 +59,21 @@ def track_click(request,unique_id):
         else:
             return HttpResponseRedirect(url)
     except:
-        return HttpResponse('Email tracking record not found') 
+        return HttpResponse('Email tracking record not found!') 
 
 def track_open(request,unique_id):
     try:
         email_tracking = EmailTracking.objects.get(unique_id=unique_id)
+        # Check if the opened_at field is already set or not
         if not email_tracking.opened_at:
             email_tracking.opened_at = timezone.now()
             email_tracking.save()
-            return HttpResponse('Email opened successfully!')
+            return HttpResponse("Email opened successfully!")
         else:
             print('Email already opened')
             return HttpResponse('Email already opened')
     except:
-        return HttpResponse('Email tracking record not found')
+        return HttpResponse('Email tracking record not found!')
 
 def track_dashboard(request):
     emails = Email.objects.all().annotate(total_sent=Sum('sent__total_sent')).order_by('-sent_at')
@@ -82,12 +83,12 @@ def track_dashboard(request):
     return render(request,'emails/track_dashboard.html',context)
 
 def track_stats(request,pk):
-    email = get_object_or_404(Email,pk=pk)
+    email = get_object_or_404(Email, pk=pk)
     sent = Sent.objects.get(email=email)
     context = {
-        'email':email,
-        'total_sent':sent.total_sent,
+        'email': email,
+        'total_sent': sent.total_sent,
     }
-    return render(request,'emails/track_stats.html',context)
+    return render(request, 'emails/track_stats.html', context)
 
 
