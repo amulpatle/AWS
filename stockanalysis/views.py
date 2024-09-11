@@ -1,8 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from dal import autocomplete
 from .models import Stock
 from .forms import StockForm
 from .utils import scrape_stock_data
+from django.contrib import messages
 # Create your views here.
 
 def stocks(request):
@@ -13,10 +14,16 @@ def stocks(request):
             # fetch the stock and symbol
             stock = Stock.objects.get(pk=stock_id)
             symbol = stock.Symbol
-            
+            print("symbol ================>>>>>>>>>>>>>>>>",symbol)
             exchange = stock.Exchange
+            print("exchange ================>>>>>>>>>>>>>>>>",exchange)
             stock_response = scrape_stock_data(symbol,exchange)
             print('stock ================>>>>>>>>>',stock_response)
+            if stock_response:
+                return redirect('stock')
+            else:
+                messages.error(request,f'Could not fetch the data for:{symbol}')
+                return redirect('stocks')
             
         else:
             print('Form is not valid')
