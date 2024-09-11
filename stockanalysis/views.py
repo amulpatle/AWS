@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from dal import autocomplete
-from .models import Stock
+from .models import Stock,StockData
 from .forms import StockForm
 from .utils import scrape_stock_data
 from django.contrib import messages
@@ -13,14 +13,30 @@ def stocks(request):
             stock_id = request.POST.get('stock')
             # fetch the stock and symbol
             stock = Stock.objects.get(pk=stock_id)
-            symbol = stock.Symbol
-            print("symbol ================>>>>>>>>>>>>>>>>",symbol)
-            exchange = stock.Exchange
-            print("exchange ================>>>>>>>>>>>>>>>>",exchange)
-            stock_response = scrape_stock_data(symbol,exchange)
+            symbol = stock.symbol
+            exchange = stock.exchange
+            stock_response = scrape_stock_data(symbol, exchange)
             print('stock ================>>>>>>>>>',stock_response)
             if stock_response:
-                return redirect('stock')
+                try:
+                    stock_data = StockData.objects.get(stock=stock)
+                except StockData.DoesNotExist:
+                    stock_data = StockData(stock=stock)
+                
+                # update the stockData instance with the response data
+                stock_data.current_price = stock_response['current_price']
+                stock_data.price_changed = stock_response['price_changed']
+                stock_data.percentage_changed = stock_response['percentage_changed']
+                stock_data.previous_close = stock_response['previous_close']
+                stock_data.week_52_high = stock_response['week_52_high']
+                stock_data.week_52_low = stock_response['week_52_low']
+                stock_data.market_cap = stock_response['market_cap']
+                stock_data.pe_ratio = stock_response['pe_ratio']
+                stock_data.dividend_yield = stock_response['dividend_yield']
+                stock_data.save()
+                print('Data updated!')
+                return redirect('stock_detail', stock_data.id)
+                
             else:
                 messages.error(request,f'Could not fetch the data for:{symbol}')
                 return redirect('stocks')
