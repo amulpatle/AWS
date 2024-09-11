@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from dal import autocomplete
 from .models import Stock,StockData
 from .forms import StockForm
@@ -13,10 +13,10 @@ def stocks(request):
             stock_id = request.POST.get('stock')
             # fetch the stock and symbol
             stock = Stock.objects.get(pk=stock_id)
-            symbol = stock.symbol
-            exchange = stock.exchange
+            symbol = stock.Symbol
+            exchange = stock.Exchange
             stock_response = scrape_stock_data(symbol, exchange)
-            print('stock ================>>>>>>>>>',stock_response)
+            
             if stock_response:
                 try:
                     stock_data = StockData.objects.get(stock=stock)
@@ -61,3 +61,11 @@ class StockAutocomplete(autocomplete.Select2QuerySetView):
             print('result==>', qs)
 
         return qs
+    
+def stock_detail(request,pk):
+    stock_data = get_object_or_404(StockData, pk=pk)
+    context = {
+        'stock_data': stock_data,
+    }
+    return render(request, 'stockanalysis/stock-detail.html', context)
+    
